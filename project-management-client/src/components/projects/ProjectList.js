@@ -9,24 +9,24 @@ import AddProject from './AddProject'; // <== !!!
 class ProjectList extends Component {
   state = { listOfProjects: [] }
 
-  getAllProjects = () =>{
-    axios.get(`http://localhost:5000/api/projects`)
-    .then(responseFromApi => {
-      this.setState({
-        listOfProjects: responseFromApi.data
+  getAllProjects = () => {
+    axios.get(`http://localhost:5000/api/projects`, { withCredentials: true })
+      .then(responseFromApi => {
+        this.setState({
+          listOfProjects: responseFromApi.data
+        })
       })
-    })
   }
 
   componentDidMount() {
     this.getAllProjects();
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <div>
-        <div style={{width: '60%', float:"left"}}>
-          { this.state.listOfProjects.map( project => {
+        <div style={{ width: '60%', float: "left" }}>
+          {this.state.listOfProjects.map(project => {
             return (
               <div key={project._id}>
                 <Link to={`/projects/${project._id}`}>
@@ -34,21 +34,22 @@ class ProjectList extends Component {
                 </Link>
                 {/*  added so the tasks can be displayed:   */}
                 <ul>
-                  { project.tasks.map((task, index) => {
+                  {project.tasks.map((task, index) => {
                     return <li key={index}>{task.title}</li>
-                  }) }
-                </ul>  
+                  })}
+                </ul>
                 {/* <p style={{maxWidth: '400px'}} >{project.description} </p> */}
               </div>
-            )})
+            )
+          })
           }
         </div>
-        <div style={{width: '40%', float:"right"}}>
-            <AddProject getData={() => this.getAllProjects()}/> {/* <== !!! */}
+        <div style={{ width: '40%', float: "right" }}>
+          <AddProject getData={() => this.getAllProjects()} /> {/* <== !!! */}
         </div>
       </div>
     )
   }
 }
- 
+
 export default ProjectList;
