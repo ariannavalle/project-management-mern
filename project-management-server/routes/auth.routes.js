@@ -5,7 +5,7 @@ const passport   = require('passport');
 const bcrypt     = require('bcryptjs');
 
 // require the user model
-const User       = require('../models/user-model');
+const User       = require('../models/user.model');
 
 
 authRoutes.post('/signup', (req, res, next) => {
@@ -13,7 +13,7 @@ authRoutes.post('/signup', (req, res, next) => {
     const password = req.body.password;
   
     if (!username || !password) {
-      res.status(400).json({ message: 'Provide username and password' });
+      res.status(400).json({ message: 'Please provide username and password' });
       return;
     }
 
@@ -22,15 +22,16 @@ authRoutes.post('/signup', (req, res, next) => {
         return;
     }
   
-    User.findOne({ username }, (err, foundUser) => {
+    // Check to see if username already exists
+    User.findOne({ username }, (err, existingUser) => {
 
         if(err){
             res.status(500).json({message: "Username check went bad."});
             return;
         }
 
-        if (foundUser) {
-            res.status(400).json({ message: 'Username taken. Choose another one.' });
+        if (existingUser) {
+            res.status(400).json({ message: 'Username already exists. Please choose a different one.' });
             return;
         }
   
@@ -49,16 +50,16 @@ authRoutes.post('/signup', (req, res, next) => {
             }
             
             // Automatically log in user after sign up
-            // .login() here is actually predefined passport method
+            // .login() here is a predefined passport method
             req.login(aNewUser, (err) => {
 
                 if (err) {
-                    res.status(500).json({ message: 'Login after signup went bad.' });
+                    res.status(500).json({ message: 'Login after signup failed.' });
                     return;
                 }
             
                 // Send the user's information to the frontend
-                // We can use also: res.status(200).json(req.user);
+                // We can also do: res.status(200).json(req.user);
                 res.status(200).json(aNewUser);
             });
         });
@@ -82,7 +83,7 @@ authRoutes.post('/login', (req, res, next) => {
       // save user in session
       req.login(theUser, (err) => {
           if (err) {
-              res.status(500).json({ message: 'Session save went bad.' });
+              res.status(500).json({ message: 'Session save failed.' });
               return;
           }
 
@@ -95,7 +96,7 @@ authRoutes.post('/login', (req, res, next) => {
 authRoutes.post('/logout', (req, res, next) => {
   // req.logout() is defined by passport
   req.logout();
-  res.status(200).json({ message: 'Log out success!' });
+  res.status(200).json({ message: 'Logged out successfully!' });
 });
 
 

@@ -81,9 +81,9 @@ app.use(
 
 
 // ROUTES MIDDLEWARE STARTS HERE:
-app.use('/api', require('./routes/project-routes'));
-app.use('/api', require('./routes/task-routes'));
-app.use('/api', require('./routes/auth-routes'));
+app.use('/api', require('./routes/project.routes'));
+app.use('/api', require('./routes/task.routes'));
+app.use('/api', require('./routes/auth.routes'));
 app.use('/', require('./routes/index'));
 
 module.exports = app;
